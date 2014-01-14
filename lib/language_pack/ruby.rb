@@ -105,6 +105,7 @@ WARNING
         create_database_yml
         install_binaries
         run_assets_precompile_rake_task
+        generate_jekyll_site
       end
       config_detect
       best_practice_warnings
@@ -120,6 +121,15 @@ WARNING
   end
 
 private
+
+  # generate jekyll
+  def generate_jekyll_site
+    puts "Building jekyll site"
+    pipe("env PATH=$PATH bundle exec jekyll build --trace 2>&1")
+    unless $? == 0
+      error "Failed to generate site with jekyll."
+    end
+  end
 
   def warn_bundler_upgrade
     old_bundler_version  = @metadata.read("bundler_version").chomp if @metadata.exists?("bundler_version")
