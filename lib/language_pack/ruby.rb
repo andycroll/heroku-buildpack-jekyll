@@ -122,10 +122,21 @@ WARNING
 
 private
 
+  def jekyll_environment_variables
+    puts "Setting up jekyll environment variables"
+    variables = user_env_hash.select do |key, value|
+      key =~ /^JEKYLL_/
+    end
+
+    variables.reduce("") do |env, (key, value)|
+      "#{env} #{key}=#{value}"
+    end
+  end
+
   # generate jekyll
   def generate_jekyll_site
     puts "Building jekyll site"
-    pipe("env PATH=$PATH bundle exec jekyll build --trace 2>&1")
+    pipe("env PATH=$PATH #{jekyll_environment_variables} bundle exec jekyll build --trace 2>&1")
     unless $? == 0
       error "Failed to generate site with jekyll."
     end
